@@ -9,7 +9,7 @@ const {
     changePassword,
 } = require("../controllers/Auth");
 
-const {resetPassword, resetPasswordToken} = require("../controllers/resetPassword");
+const {resetPassword, resetPasswordToken} = require("../controllers/ResetPassword");
 
 const {auth} = require("../middlewares/auth");
 
