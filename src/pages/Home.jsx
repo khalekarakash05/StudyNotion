@@ -1,15 +1,21 @@
 import React from 'react'
+import { useState } from 'react';
 import { Link } from 'react-router-dom'
 import { FaArrowRight } from "react-icons/fa";
 import HighlightText from '../components/core/HomePage/HighlightText';
 import CTAButton from '../components/core/HomePage/Button';
 import Banner from "../assets/Images/banner.mp4"
-// import CodeBlocks from '../components/core/HomePage/CodeBlocks';
 import CodeBlocks from '../components/core/HomePage/CodeBlocks';
 import TimelineSection from '../components/core/HomePage/TimelineSection';
 import LearningLanguageSection from '../components/core/HomePage/LearningLanguageSection';
+import InstructorSection from '../components/core/HomePage/InstructorSection';
+import Footer from '../components/common/Footer';
+import ExploreMore from '../components/core/HomePage/ExploreMore';
+
+
 
 const Home = () => {
+
   return (
     <div>
         {/* section 1 */}
@@ -141,6 +147,11 @@ const Home = () => {
 
                 </CodeBlocks>
             </div>
+
+
+            <ExploreMore></ExploreMore>
+
+
         </div>
 
         {/* section 2 */}
@@ -148,7 +159,7 @@ const Home = () => {
             <div className='homepage_bg h-[310px] '>
                 <div className='w-11/12 max-w-maxContent flex flex-col items-center justify-between gap-5 mx-auto'>
                     <div className='h-[150px]'></div>
-                    <div className='flex flex-row gap-7 text-white'>
+                    <div className='flex flex-row gap-7 text-white lg:mt-14'>
                         <CTAButton active={true} linkto={"/signup"}>
                             <div className='flex items-center gap-3'>
                             Explore Full Catalog
@@ -204,8 +215,20 @@ const Home = () => {
         </div>
 
         {/* section 3 */}
+        <div className='w-11/12 mx-auto max-w-maxContent flex flex-col items-center justify-between
+        gap-8 bg-richblack-900 text-white'>
+            <InstructorSection></InstructorSection>
+
+            <h2 className='text-center text-4xl font-semibold mt-10'>Reviews from other learners</h2>
+
+            {/* review slider here */}
+        </div>
+
+
+        
 
         {/* footer */}
+        <Footer></Footer>
     </div>
   )
 }
