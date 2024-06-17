@@ -6,6 +6,8 @@ import { setUser } from "../../slices/profileSlice"
 import { apiConnector } from "../apiconnector"
 import { endpoints } from "../apis"
 
+
+
 const {
   SENDOTP_API,
   SIGNUP_API,
@@ -56,6 +58,7 @@ export function signUp(
     const toastId = toast.loading("Loading...")
     dispatch(setLoading(true))
     try {
+      console.log("accountType", accountType)
       const response = await apiConnector("POST", SIGNUP_API, {
         accountType,
         firstName,
@@ -101,11 +104,16 @@ export function login(email, password, navigate) {
 
       toast.success("Login Successful")
       dispatch(setToken(response.data.token))
+      const fullName = `${response.data.user.firstName} ${response.data.user.lastName}`
+      console.log("fullName", fullName)
       const userImage = response.data?.user?.image
         ? response.data.user.image
-        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`
+        : `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(response.data.user.firstName)}+${encodeURIComponent(response.data.user.lastName)}`
+        console.log("userImage", userImage);
       dispatch(setUser({ ...response.data.user, image: userImage }))
       localStorage.setItem("token", JSON.stringify(response.data.token))
+      //yahi par galati ki hai let's resolve it
+      localStorage.setItem("user", JSON.stringify({ ...response.data.user, image: userImage }))
       navigate("/dashboard/my-profile")
     } catch (error) {
       console.log("LOGIN API ERROR............", error)

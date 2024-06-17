@@ -23,12 +23,13 @@ exports.resetPasswordToken = async(req, res) => {
         if(!user){
             return res.status(401).json({
                 success: false,
-                message: "Invalid mail, please register first",
+                message: `This Email: ${email} is not Registered With Us Enter a Valid Email`,
             })
         }
         //generate token
 
-        const token = crypto.randomUUID();
+        // const token = crypto.randomUUID();
+        const token = crypto.randomBytes(20).toString('hex');
 
         //update the user by adding this token and expiry time
         const updateUser = await User.findOneAndUpdate({email: email},

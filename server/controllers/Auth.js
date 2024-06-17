@@ -25,7 +25,7 @@ exports.sendOTP = async(req, res) =>{
 
     //then validate is email already exists
     const checkUserExists = await User.findOne({email})
-    
+    console.log("checkuserexists", checkUserExists)
     //if exists then return a response
     if(checkUserExists){
         return res.status(401).json({
@@ -44,6 +44,7 @@ exports.sendOTP = async(req, res) =>{
     //now check wheather that otp is already exists in db
 
     const result = await Otp.findOne({otp: otp});
+    console.log('result', result)
 
     //if yes then again generate new otp
     while(result){
@@ -60,6 +61,7 @@ exports.sendOTP = async(req, res) =>{
     console.log("otpPayload", otpPayload);
     //if not then create entry in db with email and otp
     const otpBody = await Otp.create(otpPayload);
+    console.log("otpBody", otpBody);
 
     //send the response
     res.status(200).json({
@@ -107,7 +109,7 @@ exports.signUp = async(req, res) =>{
     }
     //check user already exists or not
     const existingUser = await User.findOne({email});
-
+    console.log("existingUser", existingUser)
     if(existingUser){
         //user already exists hai
         return res.status(401).json({
@@ -136,9 +138,12 @@ exports.signUp = async(req, res) =>{
             message: "Invalid OTP",
         })
     }
+
+    console.log("userotp", otp)
     //hash karlo password ko
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashedPassword", hashedPassword)
 
     //db me entry create karlo
 
@@ -149,6 +154,20 @@ exports.signUp = async(req, res) =>{
         about: null,
     })
 
+    console.log("profileDetails", profileDetails)
+
+    // const user = await User.create({
+    //     firstName,
+    //     lastName,
+    //     email,
+    //     password: hashedPassword,
+    //     contactNumber,
+    //     accountType,
+    //     additionDetails: profileDetails._id,
+    //     image: `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName}+${response.data.user.lastName}`
+    // })
+    //return response
+
     const user = await User.create({
         firstName,
         lastName,
@@ -157,9 +176,10 @@ exports.signUp = async(req, res) =>{
         contactNumber,
         accountType,
         additionDetails: profileDetails._id,
-        image: `https://api.dicebear.com/8.x/initials/svg?seed=${firstName} ${lastName}`
+        image: `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(firstName)}+${encodeURIComponent(lastName)}`
     })
-    //return response
+    
+    console.log("userdata", user);
 
     return res.status(200).json({
         success: true,

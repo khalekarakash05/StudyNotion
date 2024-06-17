@@ -5,18 +5,19 @@ require("dotenv").config();
 exports.contactUs = async(req, res) => {
     try {
         //get the user data from req body 
-        const {firstName, lastName, email, contactNumber, message} = req.body;
+        const {firstName, lastName, email, dropdown,phoneNumber, message} = req.body;
 
-        //validation
-        if(!firstName || !lastName || !email || !contactNumber || !message){
+        //validation    
+        console.log(firstName, lastName, email, phoneNumber, dropdown, message)
+        if(!firstName || !email || !message || !phoneNumber ||!dropdown){
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
             })
         }
-
+        
         //send mail to user that their message has been received
-        console.log("Heare");
+        // console.log("Heare");
         const userData = await mailSender(
             email,
             "Message Received",
@@ -33,7 +34,7 @@ exports.contactUs = async(req, res) => {
             `Hello Admin, a new message has been received from 
                 ${firstName} ${lastName}. Kindly check the message and get back to the user
                 Email: ${email} 
-                Contact Number: ${contactNumber}
+                Contact Number: ${dropdown} ${phoneNumber}
                 Message: ${message}`
         );
 
