@@ -4,7 +4,12 @@ const router = express.Router();
 const {
     createCourse,
     showAllCourse,
-    getAllCourseDetails
+    getAllCourseDetails,
+    editCourse,
+    getInstructorCourses,
+    deleteCourse,
+    getFullCourseDetails
+    
     
 } = require("../controllers/Courses");
 
@@ -75,7 +80,19 @@ router.delete("/deletesubsection", auth, isInstructor, deleteSubSection);
 router.get("/showall", showAllCourse);
 
 //route for getting all course details
-router.post("/getcourse", getAllCourseDetails);
+router.post("/getCourseDetails", getAllCourseDetails);
+
+//route for edit course
+router.post("/editCourse", auth, isInstructor, editCourse);
+
+//route for getting all courses of instructor
+router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
+
+//route for delting course
+router.delete("/deleteCourse", auth, isInstructor, deleteCourse)
+
+//route for getting full course details
+router.post("/getFullCourseDetails", auth, isInstructor, getFullCourseDetails);
 
 //********************************************************************* */
 //                         Rating and Review Routes

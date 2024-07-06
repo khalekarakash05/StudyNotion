@@ -1,41 +1,72 @@
 import { createSlice } from "@reduxjs/toolkit"
-
+import { toast } from "react-hot-toast"
 
 const initialState = {
-    totalItems : localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')).length : 0,
+  cart: localStorage.getItem("cart")
+    ? JSON.parse(localStorage.getItem("cart"))
+    : [],
+  total: localStorage.getItem("total")
+    ? JSON.parse(localStorage.getItem("total"))
+    : 0,
+  totalItems: localStorage.getItem("totalItems")
+    ? JSON.parse(localStorage.getItem("totalItems"))
+    : 0,
 }
 
 const cartSlice = createSlice({
-    name: "cart",
-    initialState,
-    reducers:{
-        totalItems: (state,value) => {
-            state.totalItems = value.payload;
-        },
+  name: "cart",
+  initialState,
+  reducers: {
+    addToCart: (state, action) => {
+      const course = action.payload
+      const index = state.cart.findIndex((item) => item._id === course._id)
 
-        //add to cart
-        add: (state, value) => {
-            let cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : [];
-            cart.push(value.payload);
-            state.totalItems = cart.length;
-            localStorage.setItem('cart', JSON.stringify(cart));
-        },
+      if (index >= 0) {
+        // If the course is already in the cart, do not modify the quantity
+        toast.error("Course already in cart")
+        return
+      }
+      // If the course is not in the cart, add it to the cart
+      state.cart.push(course)
+      // Update the total quantity and price
+      state.totalItems++
+      state.total += course.price
+      // Update to localstorage
+      localStorage.setItem("cart", JSON.stringify(state.cart))
+      localStorage.setItem("total", JSON.stringify(state.total))
+      localStorage.setItem("totalItems", JSON.stringify(state.totalItems))
+      // show toast
+      toast.success("Course added to cart")
+    },
+    removeFromCart: (state, action) => {
+      const courseId = action.payload
+      const index = state.cart.findIndex((item) => item._id === courseId)
 
-        //remove to cart
-        remove: (state, action) => {
-            let cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : [];
-            cart = cart.filter(item => item.id !== action.payload);
-            state.totalItems = cart.length;
-            localStorage.setItem('cart', JSON.stringify(cart));
-        },
-    
-        //reset cart
-        resetCart : (state, action) => {
-            state.totalItems = 0;
-            localStorage.setItem('cart', JSON.stringify([]));
-        }
-    }
+      if (index >= 0) {
+        // If the course is found in the cart, remove it
+        state.totalItems--
+        state.total -= state.cart[index].price
+        state.cart.splice(index, 1)
+        // Update to localstorage
+        localStorage.setItem("cart", JSON.stringify(state.cart))
+        localStorage.setItem("total", JSON.stringify(state.total))
+        localStorage.setItem("totalItems", JSON.stringify(state.totalItems))
+        // show toast
+        toast.success("Course removed from cart")
+      }
+    },
+    resetCart: (state) => {
+      state.cart = []
+      state.total = 0
+      state.totalItems = 0
+      // Update to localstorage
+      localStorage.removeItem("cart")
+      localStorage.removeItem("total")
+      localStorage.removeItem("totalItems")
+    },
+  },
 })
 
-export const { totalItems, add, remove, resetCart } = cartSlice.actions;
-export default cartSlice.reducer;
+export const { addToCart, removeFromCart, resetCart } = cartSlice.actions
+
+export default cartSlice.reducer

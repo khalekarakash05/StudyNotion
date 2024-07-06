@@ -5,12 +5,17 @@ require("dotenv").config();
 //auth
 exports.auth = async(req, res, next) => {
     //extract the token
+    // console.log("req ke header me", req.headers);
     const token = req.cookies.token || 
                     req.body.token ||
-                    req.header("Authorization").replace("Bearer"," ");
+                    req.header("authorisation").replace("Bearer ","");
+                    // req.header("Authorization").split(" ")[1]
     
     //verify is token missing
-    console.log("token", token);
+    // console.log("req ke header ", req.header("authorization"));
+    // console.log("cookies",req.cookies.token);
+    // console.log("body", req.body.token);
+    // console.log("token", token);
     if(!token){
         return res.status(401).json({
             success: false,
@@ -20,7 +25,9 @@ exports.auth = async(req, res, next) => {
 
     //verify that token 
     try {
-        const decode = await jwt.verify(token, process.env.JWT_SECRET);
+        console.log("token", token)
+        // const decode = await jwt.verify(token, process.env.JWT_SECRET);
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
         console.log("decode", decode);
         req.user = decode;
     } catch (error) {

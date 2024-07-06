@@ -7,6 +7,7 @@ const {
     updateProfile,
     getUserDetails,
     updateDisplayPicture,
+    getEnrolledCourses,
 
 } = require("../controllers/Profile");
 
@@ -27,6 +28,7 @@ router.get("/getuser", auth, getUserDetails);
 router.put("/updatedisplaypicture", auth, updateDisplayPicture);
 
 //get enrolled courses
+router.get("/getEnrolledCourses", auth, getEnrolledCourses);
 
 
 //exporting the router

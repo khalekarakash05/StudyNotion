@@ -1,11 +1,13 @@
 const Section = require("../models/Section");
 const Course = require("../models/Course");
+const SubSection = require("../models/SubSection")
 
 
 exports.createSection = async(req, res)=> {
     try {
         //data fetch
         const {sectionName, courseId} = req.body;
+        console.log("section", sectionName, courseId);
 
         //data validation
         if(!sectionName || !courseId){
@@ -17,6 +19,7 @@ exports.createSection = async(req, res)=> {
 
         //create section
         const newSection = await  Section.create({sectionName});
+        console.log("newSection", newSection);
 
         //update course with section objectID
         const updatedCourseDetails = await Course.findByIdAndUpdate(
@@ -27,7 +30,14 @@ exports.createSection = async(req, res)=> {
                 }
             },
             {new: true}
-        )
+        ).populate({
+            path: "courseContent",
+            populate: {
+                path: "subSection",
+            },
+        })
+        .exec();
+        console.log("updatedCourseDetails", updatedCourseDetails);
         //HM : use populate in such a way that replace sections and 
         //subsections both in the updatedCoursesDetails
 
@@ -50,7 +60,8 @@ exports.createSection = async(req, res)=> {
 exports.updateSection = async(req, res)=>{
     try {
         //data input
-        const {sectionName, sectionId} = req.body;
+        const {sectionName, sectionId,  courseId} = req.body;
+        console.log("sectionName", sectionName, "sectionId", sectionId)
 
         //data validation
         if(!sectionName || !sectionId){
@@ -65,11 +76,21 @@ exports.updateSection = async(req, res)=>{
             {sectionName},
             {new: true}
         )
+        console.log("updatedSection", updatedSection)
+
+        //
+        const courses = await Course.findById(courseId)
+                            .populate({
+                                path:"courseContent",
+                                populate:{
+                                    path:"subSection"
+                                }
+                            }).exec();
         //return response
         return res.status(200).json({
-            success: false,
+            success: true,
             message: "Section updated successfully",
-            updatedSection
+            data: courses
         })
     } catch (error) {
         console.log(error);
@@ -84,24 +105,46 @@ exports.updateSection = async(req, res)=>{
 //delete section
 exports.deleteSection = async(req, res) => {
     try {
+        // res.send("delete section")
       //get id => assuming that we are sending id in params
       //HM req.params ke sath test karana
       const {sectionId, courseId} = req.body;
-      //use findbyidanddelete
-      await Section.findByIdAndDelete(sectionId);
-      //return res  
+      console.log("sectionid cou;seid", sectionId, courseId);
+      
       //TODO: do we need to delete the id from course schema??
-      await Course.findByIdAndUpdate(
-          courseId,
-          {
-              $pull: {
-                  courseContent: sectionId,
-              }
-          },
-          {new: true}
-      )
+      await Course.findByIdAndUpdate(courseId, {
+			$pull: {
+				courseContent: sectionId,
+			}
+		})
+        //use findbyidanddelete
+       const section = await Section.findById(sectionId);
+       console.log(sectionId, courseId);
+       if(!section) {
+           return res.status(404).json({
+               success:false,
+               message:"Section not Found",
+           })
+       }
+      //return res  
+       
+      await SubSection.deleteMany({_id: {$in: section.subSection}});
+
+      await Section.findByIdAndDelete(sectionId);
+
+      //find course for sending response
+      const updatedCourse = await Course.findById(courseId)
+                            .populate({
+                                path: "courseContent",
+                                populate:{
+                                    path: "subSection"
+                                }
+                            }).exec()
+      
+      console.log("her we are")
       return res.status(200).json({
         success: true,
+        data:updatedCourse,
         message: "Section is deleted successfully"
       })
     } catch (error) {

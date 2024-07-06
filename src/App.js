@@ -15,9 +15,20 @@ import MyProfile from "./components/core/Dashboard/MyProfile";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import Error from "./pages/Error"
+import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses";
+import Cart from "./components/core/Dashboard/Cart"
+import { ACCOUNT_TYPE } from "./utils/constants";
+import { useSelector } from "react-redux";
+import Settings from "./components/core/Dashboard/Settings";
+import AddCourse from "./components/core/Dashboard/AddCourse";
+import MyCourses from "./components/core/Dashboard/MyCourses"
+import EditCourse from "./components/core/Dashboard/EditCourse";
 
 
 function App() {
+
+  const user = useSelector((state) => state.profile.user)
+  console.log("user", user)
   return (
     <div className="w-screen min-h-screen bg-richblack-900 flex flex-col font-inter">
       <Navbar></Navbar>
@@ -84,10 +95,50 @@ function App() {
 
           <Route path="dashboard/my-profile"
           element = {<MyProfile></MyProfile>}>
-
           </Route>
+          {/* completed styling still here */}
 
-          </Route>
+          
+
+          <Route
+          path="dashboard/settings"
+          element={<Settings></Settings>}
+          ></Route>
+
+          {
+            user?.accountType === ACCOUNT_TYPE.STUDENT && (
+              <>
+                <Route path="dashboard/enrolled-courses" 
+                  element={<EnrolledCourses></EnrolledCourses>}
+                  ></Route> 
+
+                  <Route
+                  path="dashboard/cart"
+                  element={<Cart></Cart>}
+                  ></Route>
+              </>
+            )
+          }
+
+
+{
+            user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+              <>
+                <Route path="dashboard/add-course" 
+                  element={<AddCourse></AddCourse>}
+                  ></Route> 
+
+                <Route path="dashboard/my-courses" 
+                  element={<MyCourses></MyCourses>}></Route>
+
+                <Route path="dashboard/edit-course/:courseId"
+                  element={<EditCourse></EditCourse>}
+                ></Route>
+              </>
+            )
+          }
+
+          </Route> 
 
           
 

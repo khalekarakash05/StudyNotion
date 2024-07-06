@@ -1,5 +1,6 @@
 const Section = require("../models/Section");
 const SubSection = require("../models/SubSection");
+const Course = require("../models/Course")
 const {uploadImageToCloudinary} = require("../utils/imageUploader");
 require("dotenv").config();
 
@@ -8,11 +9,13 @@ exports.createSubSection = async(req, res) => {
     try {
         //fetch data from req body
         const {sectionId, title, description, timeDuration} = req.body;
+        console.log("sectionId", sectionId, "title", title, "description", description, "timeDuration", timeDuration)
         //extract file/ video
+        console.log("req.files", req.files)
         const video = req.files.videoFile;
         console.log("object", video);
-        //validation
-        if(!sectionId || !title || !description || !timeDuration || !video){
+        //validation //timeduration
+        if(!sectionId || !title || !description || !video){
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -46,7 +49,7 @@ exports.createSubSection = async(req, res) => {
         //return response
         return res.status(200).json({
             success: true,
-            newSubsection,
+            data: newSubsection,
             message: "SubSection is created successfully"
         })
     } catch (error) {
@@ -64,12 +67,13 @@ exports.updateSubSection = async(req, res) => {
     try {
         //fetch data which want to update
         const {title, description, timeDuration, subSectionId} = req.body;
+        console.log("title, ", title, "description", description, "timeDuration", timeDuration, "subSectionId", subSectionId);
 
         //extract video file as well
         const video = req.files.videoFile;
 
-        //validate that data
-        if(!title || !description || !timeDuration || !subSectionId || !video){
+        //validate that data || !timeDuration
+        if(!title || !description  || !subSectionId || !video){
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -88,6 +92,7 @@ exports.updateSubSection = async(req, res) => {
             },
             {new: true},
         )
+        //TODO: log updated subsection details here
         console.log("here");
         //return response
         return res.status(200).json({
@@ -109,25 +114,28 @@ exports.deleteSubSection  = async(req, res) => {
     try {
         //get subsectionid from param 
         // const {subsectionId} = req.params.id;
-        const {subsectionId, sectionId} = req.body;
+        const {subSectionId, sectionId} = req.body;
+        console.log("subsection and section id", subSectionId, sectionId)
         //findbyidanddelete delete subsection
         await SubSection.findByIdAndDelete(
-            {_id: subsectionId},
+            {_id: subSectionId},
         )
         //TODO: do we need to delete the subsection id from section schema also
         await Section.findByIdAndUpdate(
             {_id: sectionId},
             {
                 $pull:{
-                    subSection: subsectionId
+                    subSection: subSectionId
                 }
             }
         )
 
+        const updatedSection = await Section.findById(sectionId).populate("subSection");
+
         //return response
         return res.status(200).json({
             success: true,
-            Section,
+            data: updatedSection,
             message: "Subsection is deleted successfully",
         })
     } catch (error) {

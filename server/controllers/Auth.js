@@ -118,7 +118,8 @@ exports.signUp = async(req, res) =>{
         })
     }
     //find most recent OTP stored for that user
-    const recentOTP = await Otp.find({ email: email }).sort({ createdAt: -1 }).limit(1);
+    // const recentOTP = await Otp.find({ email: email }).sort({ createdAt: -1 }).limit(1);
+    const recentOTP = await Otp.find({email}).sort({createdAt: -1}).limit(1);
     console.log("recentOTP", recentOTP);
 
     //validate otp with otp send in mail
