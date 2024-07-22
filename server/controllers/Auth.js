@@ -4,6 +4,8 @@ const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
 const Profile = require("../models/Profile");
 const jwt = require("jsonwebtoken");
+const mailSender = require("../utils/mailSender");
+const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 require("dotenv").config();
 
 //sendOTP
@@ -14,17 +16,19 @@ exports.sendOTP = async(req, res) =>{
 
     //fetch email from req ki body
     const {email} = req.body;
-
+    console.log("phoneNumber", email)
+    const Email = email.email;
+    console.log("email", email);
     //validate email fill or not
-    if(!email){
+    if(!Email){
         return res.status(401).json({
             success: false,
-            message: "please enter the email"
+            message: "please enter the Email"
         })
     }
 
-    //then validate is email already exists
-    const checkUserExists = await User.findOne({email})
+    //then validate is Email already exists
+    const checkUserExists = await User.findOne({Email})
     console.log("checkuserexists", checkUserExists)
     //if exists then return a response
     if(checkUserExists){
@@ -57,10 +61,13 @@ exports.sendOTP = async(req, res) =>{
         result = await Otp.findOne({otp: otp});
     }
 
-    const otpPayload = {email, otp};
+    const otpPayload = {Email, otp};
     console.log("otpPayload", otpPayload);
-    //if not then create entry in db with email and otp
-    const otpBody = await Otp.create(otpPayload);
+    //if not then create entry in db with Email and otp
+    const otpBody = await Otp.create(
+        {email: otpPayload.Email,
+        otp: otp,}
+    );
     console.log("otpBody", otpBody);
 
     //send the response
@@ -87,10 +94,12 @@ exports.signUp = async(req, res) =>{
          //signUp
 
     //data fetch from req body
+    console.log("req.body", req.body)
     const {
-        firstName, lastName, email, password, confirmPassword, accountType,
-        contactNumber, otp
+        firstName, lastName, email,phoneNumber, password, confirmPassword, accountType,
+        contactNumber, otp, 
     } = req.body;
+    console.log("phoneNumber", phoneNumber)
 
     //validate karlo data ko
         if(!firstName || !lastName || !email || !password ||
@@ -173,6 +182,7 @@ exports.signUp = async(req, res) =>{
         firstName,
         lastName,
         email,
+        phoneNumber,
         password: hashedPassword,
         contactNumber,
         accountType,
@@ -212,6 +222,7 @@ exports.login = async(req, res) => {
     }
     //check user exists or not 
     const user = await User.findOne({email}).populate("additionDetails");
+    // console.log("user", user);
     
     if(!user){
         return res.status(401).json({
@@ -270,6 +281,7 @@ exports.changePassword = async(req, res) =>{
     try {
         //get data from req body
     const {oldPassword, newPassword, confirmPassword} = req.body;
+    console.log("req.body", req.body);
 
     //get old password, new password, confirm password
     //validate data
@@ -288,9 +300,14 @@ exports.changePassword = async(req, res) =>{
             message: "User not found, Please login first",
         })
     }
-    //if user exists then
+    //if user exists the
+    const users = await User.findById(user?.id);
+    console.log("users", users);
     //match old password
-    const result = await bcrypt.compare(oldPassword, user.password);
+    // console.log(oldPassword, user);
+
+    const result = await bcrypt.compare(oldPassword, users.password);
+    console.log("result", result);
     if(!result){
         return res.status(401).json({
             success: false,
@@ -298,6 +315,7 @@ exports.changePassword = async(req, res) =>{
         })
     }
     //if password match then
+    console.log("here", result, "password", newPassword, confirmPassword);
     if(newPassword != confirmPassword){
         return res.status(400).json({
             success: false,
@@ -305,12 +323,22 @@ exports.changePassword = async(req, res) =>{
         })
     }
     //hash new password
+    // console.log("before hashed", newPassword)
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // console.log("after hashed", hashedPassword)
     //update password in db
-    const updated = await User.findByIdAndUpdate(user.id, {password: hashedPassword});
-    // console.log("updated pass", updated)
+    users.password = hashedPassword;
+    users.save();
+    const updated = await User.findById(user.id);
+    console.log("updated pass",updated )
     //send mail to user = password changed successfully
-    sendMail(user.email, "Password Changed Successfully", "Your password has been changed successfully !!!");
+    // mailSender(user.email, "Password Changed Successfully", "Your password has been changed successfully !!!");
+    const mailResponse = await mailSender(
+        user?.email,
+        `Password Changed Successfully`,
+        passwordUpdated(user?.email, users?.firstName)
+    )
+    console.log("mailresponse", mailResponse)
     //return response
     return res.status(200).json({
         success: true,

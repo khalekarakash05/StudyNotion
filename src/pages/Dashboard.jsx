@@ -38,7 +38,7 @@ const Dashboard = () => {
 
     if (loading || profileLoading) {
         <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
-        <div className="spinner"></div>
+        <div className="Spinner"></div>
       </div>
     }
 

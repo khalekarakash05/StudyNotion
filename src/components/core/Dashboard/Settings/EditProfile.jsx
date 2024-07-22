@@ -20,9 +20,16 @@ export default function EditProfile() {
   } = useForm()
 
   const submitProfileForm = async (data) => {
-    // console.log("Form Data - ", data)
+    console.log("Form Data - ", data)
     try {
-      dispatch(updateProfile(token, data))
+      const datta = await dispatch(updateProfile(token, data))
+      console.log("this data", datta);
+      console.log("user", user);
+      // if (datta) {
+      //   localStorage.setItem("user", JSON.stringify(datta));
+      // }
+      // console.log("usernow", user);
+
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
     }
@@ -45,9 +52,12 @@ export default function EditProfile() {
                 name="firstName"
                 id="firstName"
                 placeholder="Enter first name"
-                className="form-style"
                 {...register("firstName", { required: true })}
                 defaultValue={user?.firstName}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               />
               {errors.firstName && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
@@ -64,9 +74,12 @@ export default function EditProfile() {
                 name="lastName"
                 id="lastName"
                 placeholder="Enter first name"
-                className="form-style"
                 {...register("lastName", { required: true })}
                 defaultValue={user?.lastName}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               />
               {errors.lastName && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
@@ -85,7 +98,6 @@ export default function EditProfile() {
                 type="date"
                 name="dateOfBirth"
                 id="dateOfBirth"
-                className="form-style"
                 {...register("dateOfBirth", {
                   required: {
                     value: true,
@@ -97,6 +109,10 @@ export default function EditProfile() {
                   },
                 })}
                 defaultValue={user?.additionalDetails?.dateOfBirth}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               />
               {errors.dateOfBirth && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
@@ -112,9 +128,12 @@ export default function EditProfile() {
                 type="text"
                 name="gender"
                 id="gender"
-                className="form-style"
                 {...register("gender", { required: true })}
                 defaultValue={user?.additionalDetails?.gender}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               >
                 {genders.map((ele, i) => {
                   return (
@@ -142,7 +161,6 @@ export default function EditProfile() {
                 name="contactNumber"
                 id="contactNumber"
                 placeholder="Enter Contact Number"
-                className="form-style"
                 {...register("contactNumber", {
                   required: {
                     value: true,
@@ -152,6 +170,10 @@ export default function EditProfile() {
                   minLength: { value: 10, message: "Invalid Contact Number" },
                 })}
                 defaultValue={user?.additionalDetails?.contactNumber}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               />
               {errors.contactNumber && (
                 <span className="-mt-1 text-[12px] text-yellow-100">
@@ -168,9 +190,12 @@ export default function EditProfile() {
                 name="about"
                 id="about"
                 placeholder="Enter Bio Details"
-                className="form-style"
                 {...register("about", { required: true })}
                 defaultValue={user?.additionalDetails?.about}
+                style={{
+                  boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                }}
+                className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
               />
               {errors.about && (
                 <span className="-mt-1 text-[12px] text-yellow-100">

@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const {auth} = require("../middlewares/auth");
+const {auth, isInstructor} = require("../middlewares/auth");
 const {
     deleteUser,
     updateProfile,
     getUserDetails,
     updateDisplayPicture,
     getEnrolledCourses,
+    instructorDashboard
 
 } = require("../controllers/Profile");
 
@@ -16,7 +17,7 @@ const {
 //***************************************************************************** */
 
 //route for updating profile
-router.post("/update", auth, updateProfile);
+router.put("/update", auth, updateProfile);
 
 //route for deleting user
 router.delete("/delete",auth, deleteUser);
@@ -29,6 +30,9 @@ router.put("/updatedisplaypicture", auth, updateDisplayPicture);
 
 //get enrolled courses
 router.get("/getEnrolledCourses", auth, getEnrolledCourses);
+
+//get instructor dashboard
+router.get("/getInstrucotrDashboard", auth, isInstructor, instructorDashboard);
 
 
 //exporting the router

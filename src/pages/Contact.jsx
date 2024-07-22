@@ -3,10 +3,11 @@ import React from "react"
 import Footer from "../components/common/Footer"
 import ContactDetails from "../components/ContactUsPage/ContactDetails"
 import ContactForm from "../components/ContactUsPage/ContactForm"
+import ReviewSlider from "../components/common/ReviewSlider"
 
 const Contact = () => {
   return (
-    <div>
+    <div className="mt-[70px]">
       <div className="mx-auto mt-20 flex w-11/12 max-w-maxContent flex-col justify-between gap-10 text-white lg:flex-row">
         {/* Contact Details */}
         <div className="lg:w-[40%]">
@@ -24,6 +25,7 @@ const Contact = () => {
           Reviews from other learners
         </h1>
         {/* <ReviewSlider /> */}
+        <ReviewSlider></ReviewSlider>
       </div>
       <Footer />
     </div>

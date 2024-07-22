@@ -146,14 +146,15 @@ const CourseInformationForm = () => {
             const response = await editCourseDetails(formData, token);
             setLoading(false);
             if(response){
-              setStep(2);
+              
               dispatch(setCourse(response));
+              dispatch(setStep(2));
             }
         }
       else{
         toast.error("No changes made to the form")
       }
-        console.log("Printing Form Data", formData);
+        // console.log("Printing Form Data", formData);
         // console.log("Printing result", response);
       return;
       
@@ -181,9 +182,11 @@ const CourseInformationForm = () => {
       if(result){
         console.log("resultinside");
         
+        
+        
+        dispatch(setCourse(result));
         dispatch(setStep(2));
         console.log("setStep(2)",setStep(2))
-        dispatch(setCourse(result));
         console.log("inside result stpe is ",step)
       }
 
@@ -365,6 +368,7 @@ const CourseInformationForm = () => {
       </div>
 
       <IconBtn disabled={loading}
+
         text = {!editCourse ? "Next" : "Save Changes"}
       >
         <MdNavigateNext />

@@ -1,6 +1,8 @@
 const Profile = require("../models/Profile");
+const CourseProgress = require("../models/CourseProgress")
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const Course = require("../models/Course");
 require("dotenv").config();
 
 exports.updateProfile = async(req, res) => {
@@ -8,9 +10,11 @@ exports.updateProfile = async(req, res) => {
         //cron job
 
 
-
+        // console.log("here baby")
         //get data 
-        const {dateOfBirth="", about="", gender, contactNumber} = req.body;
+        const {dateOfBirth="", about="", gender, contactNumber, firstName, lastName} = req.body;
+        console.log("req.body", req.body);
+        // return;
 
         //get userId
         const id =  req.user.id;
@@ -26,7 +30,8 @@ exports.updateProfile = async(req, res) => {
         uid = JSON.stringify(id);
         console.log("id", uid);
         
-        const userdetails = await User.findById(id);
+        const userdetails = await User.findById(id).populate("additionDetails").exec();
+        console.log("userdetails", userdetails);
         console.log("profileid", userdetails.additionDetails._id);
         const profileId = userdetails.additionDetails._id;
         const profileDetails = await Profile.findById(profileId);
@@ -36,11 +41,18 @@ exports.updateProfile = async(req, res) => {
         profileDetails.contactNumber = contactNumber;
         profileDetails.gender = gender;
         profileDetails.about = about;
+        let data;
+        if(firstName || lastName){
+           data=  await User.findByIdAndUpdate({_id: id}, {firstName, lastName}).populate("additionDetails");
+          console.log("kkk",data);
+        }
         await profileDetails.save();
+        
+        console.log("here updated profiel", profileDetails)
         //return response
         return res.status(200).json({
             success: true,
-            profileDetails,
+            profileDetails: data,
             message: "Profile is updated successfully",
         })
     } catch (error) {
@@ -165,20 +177,90 @@ exports.updateDisplayPicture = async(req, res) => {
 exports.getEnrolledCourses = async (req, res) => {
     try {
       const userId = req.user.id
-      const userDetails = await User.findOne({
-        _id: userId,
-      })
-        .populate("courses")
-        .exec()
+      console.log("userid", userId)
+      let userDetails = await User.findOne({
+		_id: userId,
+	  }).populate(
+        {
+            path: 'courses',
+        populate: {
+          path: 'courseContent',
+          populate: {
+            path: 'subSection'
+          }
+        }
+        }
+      )
+		.exec()
+        console.log("userdetails", userDetails)
+
+        // Explicitly log courseContent and its subSection
+        // userDetails.courses.forEach(course => {
+        //     console.log(`Course: ${course.courseName}`);
+        //     course.courseContent.forEach(content => {
+        //       console.log(`  Course Content ID: ${content._id}`);
+        //       content.subSection.forEach(sub => {
+        //         console.log(`    SubSection Title: ${sub.title}`);
+        //         console.log(`    SubSection Duration: ${sub.timeDuration}`);
+        //       });
+        //     });
+        //   });
+
+
+
       if (!userDetails) {
         return res.status(400).json({
           success: false,
           message: `Could not find user with id: ${userDetails}`,
         })
       }
+
+      userDetails = userDetails.toObject();
+    //   console.log("userdetails", userDetails)
+      var subSectionLength = 0;
+      console.log("length ", userDetails?.courses?.length)
+      for(var i = 0; i < userDetails?.courses?.length; i++){
+        let totalDurationInSeconds = 0;
+        subSectionLength = 0;
+        console.log("content ki length", userDetails?.courses[i]?.courseContent?.length)
+        for(var j = 0; j<userDetails.courses[i].courseContent.length; j++){
+            // totalDurationInSeconds += userDetails.courses[i].courseContent[j].subSection.reduce((acc, curr) => acc + parseInt(curr.timeDuration), 0);
+            // userDetails.courses[i].totalDuration = convertSecondsToDuration(
+            //     totalDurationInSeconds
+            // )
+            console.log("totaldureations", totalDurationInSeconds)
+              subSectionLength +=
+              userDetails.courses[i].courseContent[j].subSection.length;
+            console.log("subSectionLength", subSectionLength)
+        }
+
+        let progressCount = await CourseProgress.findOne({
+            courseID: userDetails.courses[i]._id,
+		    userID: userId,
+        })
+
+
+        progressCount = progressCount?.completedVideos.length || 0;
+        console.log("progressCount", progressCount)
+
+        if (subSectionLength === 0) {
+            userDetails.courses[i].progressPercentage = 100
+          } else {
+            // To make it up to 2 decimal point
+            const multiplier = Math.pow(10, 2)
+            userDetails.courses[i].progressPercentage = Math.round(
+              (progressCount / subSectionLength) * 100 * multiplier
+            ) / multiplier;
+            
+              
+            console.log("progressPercentage", userDetails.courses[i].progressPercentage)
+          }
+      }
+      console.log("progress percentage", userDetails.courses)
       return res.status(200).json({
         success: true,
         data: userDetails.courses,
+        message: "success"
       })
     } catch (error) {
       return res.status(500).json({
@@ -187,3 +269,39 @@ exports.getEnrolledCourses = async (req, res) => {
       })
     }
 };
+
+exports.instructorDashboard = async(req, res) => {
+    try {
+
+        const courseDetails = await Course.find({instructor: req.user.id});
+
+        const courseData = courseDetails.map((course)=> {
+            const totalStudentsEnrolled = course.studentEnrolled.length;
+            const totalAmountGenerated = totalStudentsEnrolled * course.price;
+
+            //create new object with a additional field
+            const courseDataWithStats = {
+                _id: course._id,
+                courseName: course.courseName,
+                courseDescription : course.courseDescription,
+                totalStudentsEnrolled,
+                totalAmountGenerated
+            };
+
+            return courseDataWithStats;
+        })
+
+        return res.status(200).json({
+            success:true,
+            course: courseData,
+            message: "Courses fetched successfully"
+        })
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}

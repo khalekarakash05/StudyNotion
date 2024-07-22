@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
+const sendSMS = require("../utils/smsSender");
 require("dotenv").config();
 
 exports.contactUs = async(req, res) => {
@@ -37,6 +38,12 @@ exports.contactUs = async(req, res) => {
                 Contact Number: ${dropdown} ${phoneNumber}
                 Message: ${message}`
         );
+
+        const smsResponse = await sendSMS(
+            `Hello ${firstName} ${lastName}, your message has been received. We will get back to you shortly`,
+            `${phoneNumber}`
+        )
+        console.log("smsResponse", smsResponse);
 
         return res.status(200).json({
             success: true,

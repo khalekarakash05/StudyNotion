@@ -10,33 +10,44 @@ const EnrolledCourses = () => {
     const navigate = useNavigate();
     const {token} = useSelector((state)=> state.auth);
     console.log("token", token)
+    const [loading, setLoading] = useState(true);
 
     const [enrolledCourses, setEnrolledCourses] = useState(null)
 
     const getEnrolledCourses = async () => {
         try {
+            
             const response = await getUserEnrolledCourses(token);
+            console.log("response", response[0]?.progressPercentage)
             setEnrolledCourses(response );
-            console.log("enrolled courses", response)
+            console.log("enrolled courses", response[0]?.courseContent)
         } catch (error) {
             console.log("unable to fetch enrolled courses")
         }
+        setLoading(false);
     }
 
 
      useEffect(() => {
-        getEnrolledCourses()
+        if(token){
+            getEnrolledCourses();
+        }
     }, [token])
 
   return (
-    <>
+    <div className = "mt-[70px]">
         <div className="text-3xl text-richblack-50">Enrolled Courses</div>
         {
-            !enrolledCourses ? (
+            loading ? (
                 <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
-                    <div className="spinner">Loading...</div>
+                    <div className="Spinner">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                 </div>
-            ) : !enrolledCourses.length ? (
+            ) : !enrolledCourses || !enrolledCourses.length ? (
                 <p className="grid h-[10vh] w-full place-content-center text-richblack-5">
                     You have not enrolled in any course yet.
                 </p>
@@ -50,7 +61,8 @@ const EnrolledCourses = () => {
 
                     {/* card yaha se shuru hote hai */}
                     {
-                        enrolledCourses.map((course, index,arr) => {
+                        enrolledCourses.map((course, index,arr) => (
+                            // {console.log("course in map", course)}
                             <div key={index}
                             className={`flex items-center border border-richblack-700 ${
                                 index === arr.length - 1 ? "rounded-b-lg" : "rounded-none"
@@ -59,8 +71,9 @@ const EnrolledCourses = () => {
                                 <div 
                                     className="flex w-[45%] cursor-pointer items-center gap-4 px-5 py-3"
                                     onClick={() => {
+                                        console.log("coursessss", course?.courseContent[0]?.subSection[0])
                                         navigate(
-                                          `/view-course/${course?._id}/section/${course.courseContent?.[0]?._id}/sub-section/${course.courseContent?.[0]?.subSection?.[0]?._id}`
+                                          `/view-course/${course?._id}/section/${course?.courseContent[0]?._id}/subSection/${course.courseContent[0]?.subSection[0]?._id}`
                                         )
                                       }}
                                 >
@@ -92,12 +105,12 @@ const EnrolledCourses = () => {
                                     ></ProgressBar>
                                 </div>
                             </div>
-                        })
+                        ))
                     }
                 </div>
             )
         }
-    </>
+    </div>
   )
 }
 

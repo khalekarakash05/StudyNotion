@@ -5,13 +5,15 @@ const Categorys = require("../models/Category");
 const {uploadImageToCloudinary} = require("../utils/imageUploader");
 const SubSection = require("../models/SubSection");
 const Section = require("../models/Section");
+const CourseProgress = require("../models/CourseProgress");
 require("dotenv").config();
 
 //create course handler
 exports.createCourse = async(req, res) => {
     try {
         //fetch data 
-        const {courseName, courseDescription, whatWillYouLearn, price, tags, Category} = req.body;
+        console.log("req ki body", req.body);
+        const {courseName, courseDescription, whatWillYouLearn, price, tags, Category,instructions} = req.body;
 
         //get thumbnail Image
         const thumbnail = req.files.thumbnailImage;
@@ -19,7 +21,7 @@ exports.createCourse = async(req, res) => {
         //validation
         console.log("courseName", courseName, "courseDescription", courseDescription, "whatWillYouLearn", whatWillYouLearn, "price", price, "tag", tags, "Category", Category, "thumbnail", thumbnail);
         if(!courseName || !courseDescription || !whatWillYouLearn || !price
-            || !tags  || !Category || !thumbnail){
+            || !tags  || !Category || !thumbnail || !instructions){
                 return res.status(401).json({
                     success: false,
                     message: "Fill all the details carefully",
@@ -66,6 +68,7 @@ exports.createCourse = async(req, res) => {
             tags: tags,
             category: tagDetails._id,
             thumbnail: thumbnailImage.secure_url,
+            instructions: instructions
         });
         //add the new course to the user schema of Instructor
         const addCourseToUser = await User.findByIdAndUpdate(
@@ -82,7 +85,7 @@ exports.createCourse = async(req, res) => {
             {_id: tagDetails._id},
             {
                 $push:{
-                    courses: newCourse._id,
+                    course: newCourse._id,
                 }
             }
         )
@@ -173,8 +176,9 @@ exports.getAllCourseDetails = async(req, res) => {
 
         return res.status(200).json({
             success: true,
+            data: courseDetails,
             message: "Course details are fetched successfully",
-            courseDetails,
+            
         })
     } catch (error) {
         return res.status(500).json({
@@ -335,13 +339,15 @@ exports.getFullCourseDetails = async (req, res) => {
         .exec()
         console.log("courseDetails : ", courseDetails)
   
-      // let courseProgressCount = await CourseProgress.findOne({
-      //   courseID: courseId,
-      //   userId: userId,
-      // // })
-      // console.log("courseProgressCount : ", courseProgressCount)
+      let courseProgressCount = await CourseProgress.findOne({
+        courseID: courseId,
+        userID: userId,
+      })
+      if(courseProgressCount){
+        console.log("courseProgressCount : ", courseProgressCount)
   
-      // console.log("courseProgressCount : ", courseProgressCount)
+      console.log("courseProgressCount : ", courseProgressCount.completedVideos.length)
+      }
   
       if (!courseDetails) {
         return res.status(400).json({
@@ -360,11 +366,12 @@ exports.getFullCourseDetails = async (req, res) => {
       let totalDurationInSeconds = 0
       // console.log("coursedeatils : ", courseDetails)
       courseDetails.courseContent.forEach((content) => {
-        // console.log("content : ", content)
+        console.log("content : ", content)
         content.subSection.forEach((subSection) => {
-          // console.log("subSection : ", subSection)
+          console.log("subSection : ", subSection)
           const timeDurationInSeconds = parseInt(subSection.timeDuration)
           totalDurationInSeconds += timeDurationInSeconds
+          console.log("timeduration", totalDurationInSeconds);
         })
       })
       // console.log("here i", totalDurationInSeconds)
@@ -375,6 +382,7 @@ exports.getFullCourseDetails = async (req, res) => {
         data: {
           courseDetails,
           // totalDuration,
+          completedVideos: courseProgressCount?.completedVideos ? courseProgressCount?.completedVideos : [],
           // completedVideos: courseProgressCount?.completedVideos
           //   ? courseProgressCount?.completedVideos
           //   : [],

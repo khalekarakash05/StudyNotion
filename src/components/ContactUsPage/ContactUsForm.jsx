@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import {apiConnector} from "../../services/apiconnector"
 import {contactusEndpoints} from "../../services/apis";
 import countryCode from "../../data/countrycode.json";
+import toast from 'react-hot-toast';
 
 const ContactUsForm = () => {
     const [loading, setLoading] = useState(false);
@@ -12,20 +13,29 @@ const ContactUsForm = () => {
         handleSubmit,
         reset,
         formState: { errors , isSubmitSuccessful},
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            dropdown: "+91",
+        },
+    });
 
     const submitContactForm = async(data) => {
+        const toastId = toast.loading("Loading...")
         console.log("Logging data", data);
         try {
-            setLoading(true);
+            // setLoading(true);
+            
             const response = await apiConnector("POST", contactusEndpoints.CONTACTUS_API, data)
             console.log("logging res", response);
             setLoading(false);
+            toast.success("Your message Received Successfully")
 
         } catch (error) {
             console.log("error", error.message);
-            setLoading(false);
+            // setLoading(false);
+            toast.error(error.message)
         }
+        toast.dismiss(toastId);
     }
 
 
@@ -41,6 +51,14 @@ const ContactUsForm = () => {
             });
         }
     }, [isSubmitSuccessful, reset]);
+
+    // if(loading === true){
+    //     return (
+    //         <div className="">
+    //             Loading...
+    //         </div>
+    //     )
+    // }
 
 
   return (
@@ -124,7 +142,7 @@ const ContactUsForm = () => {
 
                 <div className="flex gap-5">
                     {/* dropdown */}
-                     <div className="flex w-[81px] flex-col gap-2">
+                     <div className="flex w-[78px] flex-col gap-2">
                         <select name="dropdown" id="dropdown"
                         {...register("dropdown", {required: true})}
                         style={{
@@ -136,7 +154,7 @@ const ContactUsForm = () => {
                                 countryCode.map((country, index)=> {
                                     return (
                                         <option key={index} value={country.code}
-                                       >
+                                       > 
                                             {country.code} - {country.country}
                                         </option>
                                     )

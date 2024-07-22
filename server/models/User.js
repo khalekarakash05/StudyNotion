@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
     },
+    phoneNumber: {
+        type: String,
+        unique: true,
+    },
     password: {
         type: String,
         required: true,
@@ -31,10 +35,12 @@ const userSchema = new mongoose.Schema({
         ref: "Profile",
         required: true,
     },
-    courses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
-    }],
+    courses: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+        },
+    ],
     image: {
         type: String,
         required: true,

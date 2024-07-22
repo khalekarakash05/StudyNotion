@@ -45,6 +45,11 @@ const {
     getAllRatingsAndReviews
 } = require("../controllers/RatingAndReview");
 
+//importing course progress controller
+const {
+    updateCourseProgress
+} = require("../controllers/CourseProgress");
+
 //importing middleware
 const {auth, isStudent, isAdmin, isInstructor} = require("../middlewares/auth");
 
@@ -80,7 +85,7 @@ router.delete("/deletesubsection", auth, isInstructor, deleteSubSection);
 router.get("/showall", showAllCourse);
 
 //route for getting all course details
-router.post("/getCourseDetails", getAllCourseDetails);
+router.post("/getCourseDetails",  getAllCourseDetails);
 
 //route for edit course
 router.post("/editCourse", auth, isInstructor, editCourse);
@@ -92,7 +97,7 @@ router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 router.delete("/deleteCourse", auth, isInstructor, deleteCourse)
 
 //route for getting full course details
-router.post("/getFullCourseDetails", auth, isInstructor, getFullCourseDetails);
+router.post("/getFullCourseDetails", auth, getFullCourseDetails);
 
 //********************************************************************* */
 //                         Rating and Review Routes
@@ -122,7 +127,15 @@ router.post("/createcategories", auth, isAdmin, createCategories);
 router.get("/showcategories", showAllCategories);
 
 //route for getting category page details
-router.get("/categorypagedetails", categoryPageDetails);
+router.post("/categorypagedetails", categoryPageDetails);
+
+//******************************************************************** */
+
+//                          Course Progress Routes
+//******************************************************************** */
+
+//route for updating course progress
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
 
 module.exports = router; 
 

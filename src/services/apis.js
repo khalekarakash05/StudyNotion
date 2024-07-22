@@ -19,7 +19,8 @@ export const contactusEndpoints = {
 
 export const profileEndPoints = {
     GET_USER_DETAILS_API: BASE_URL + "/profile/getuser",
-    GET_USER_ENROLLED_COURSES_API: BASE_URL + "/profile/getEnrolledCourses"
+    GET_USER_ENROLLED_COURSES_API: BASE_URL + "/profile/getEnrolledCourses",
+    GET_INSTRUCTOR_DATA_API: BASE_URL + "/profile/getInstrucotrDashboard",
 }
 
 
@@ -30,6 +31,20 @@ export const settingsEndpoints = {
     CHANGE_PASSWORD_API: BASE_URL + "/user/changepassword",
     DELETE_PROFILE_API: BASE_URL + "/profile/delete",
   }
+
+// CATALOG PAGE DATA
+export const catalogData = {
+  CATALOGPAGEDATA_API: BASE_URL + "/course/categorypagedetails",
+}
+
+//STUDENTS END POINTS
+// payment/capturepayment
+// /verifysignature
+export const studentEndPoints = {
+  COURSE_PAYMENT_API: BASE_URL + "/payment/capturepayment",
+  COURSE_VERIFY_API: BASE_URL + "/payment/verifysignature",
+  SEND_PAYMENT_SUCCESS_EMAIL_API: BASE_URL + "/payment/sendPaymentSuccessEmail",
+}
 
 
 export const courseEndpoints = {
@@ -50,4 +65,10 @@ export const courseEndpoints = {
       BASE_URL + "/course/getFullCourseDetails",
     LECTURE_COMPLETION_API: BASE_URL + "/course/updateCourseProgress",
     CREATE_RATING_API: BASE_URL + "/course/createRating",
+
+}
+
+//rating and reveiws
+export const ratingEndpoints = {
+  REVIEWS_DETAILS_API: BASE_URL + "/course/getratings",
 }

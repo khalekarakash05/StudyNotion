@@ -11,13 +11,14 @@ import LearningLanguageSection from '../components/core/HomePage/LearningLanguag
 import InstructorSection from '../components/core/HomePage/InstructorSection';
 import Footer from '../components/common/Footer';
 import ExploreMore from '../components/core/HomePage/ExploreMore';
+import ReviewSlider from '../components/common/ReviewSlider';
 
 
 
 const Home = () => {
 
   return (
-    <div>
+    <div className="mt-[70px]">
         {/* section 1 */}
         <div className='relative mx-auto flex flex-col w-11/12 max-w-maxContent items-center 
       text-white justify-between'>
@@ -219,6 +220,7 @@ const Home = () => {
             <h2 className='text-center text-4xl font-semibold mt-10'>Reviews from other learners</h2>
 
             {/* review slider here */}
+            <ReviewSlider></ReviewSlider>
         </div>
 
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose")
 
 
 const userRouter = require("./routes/User");
@@ -47,6 +48,8 @@ app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/contact", contactUsRouter);
 
+// Enable Mongoose debugging
+// mongoose.set('debug', true);
 
 //default route
 app.get("/", (req, res) => {

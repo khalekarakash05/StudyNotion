@@ -10,12 +10,14 @@ const RenderCartCourses = () => {
 
     
     const cart = useSelector((state) => state.cart)
+    // console.log("cart: ", cart.cart.map((item)=>));
+    cart.cart.map((item)=>{console.log(item.courseName)})
     const dispatch  = useDispatch();
 
   return (
     <div className="flex flex-1 flex-col">
         {
-            cart.map((course, index) => (
+            cart?.cart?.map((course, index) => (
                 <div key={index} 
                     className= {`flex w-full flex-wrap items-start justify-between gap-6 ${
                         index !== cart.length - 1 && "border-b border-b-richblack-400 pb-6"

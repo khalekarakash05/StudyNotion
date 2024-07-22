@@ -21,6 +21,9 @@ const cartSlice = createSlice({
       const course = action.payload
       const index = state.cart.findIndex((item) => item._id === course._id)
 
+      console.log("Course to be added:", course);
+      console.log("Course price type:", typeof course.price);
+
       if (index >= 0) {
         // If the course is already in the cart, do not modify the quantity
         toast.error("Course already in cart")
@@ -30,7 +33,9 @@ const cartSlice = createSlice({
       state.cart.push(course)
       // Update the total quantity and price
       state.totalItems++
-      state.total += course.price
+      const coursePrice = Number(course.price)
+      console.log("Parsed course price:", coursePrice);
+      state.total += coursePrice
       // Update to localstorage
       localStorage.setItem("cart", JSON.stringify(state.cart))
       localStorage.setItem("total", JSON.stringify(state.total))
@@ -43,17 +48,19 @@ const cartSlice = createSlice({
       const index = state.cart.findIndex((item) => item._id === courseId)
 
       if (index >= 0) {
-        // If the course is found in the cart, remove it
+        const courseId = action.payload
+      const index = state.cart.findIndex((item) => item._id === courseId)
+
+      if (index >= 0) {
+        const coursePrice = Number(state.cart[index].price)
         state.totalItems--
-        state.total -= state.cart[index].price
+        state.total -= coursePrice
         state.cart.splice(index, 1)
-        // Update to localstorage
         localStorage.setItem("cart", JSON.stringify(state.cart))
         localStorage.setItem("total", JSON.stringify(state.total))
         localStorage.setItem("totalItems", JSON.stringify(state.totalItems))
-        // show toast
         toast.success("Course removed from cart")
-      }
+      }}
     },
     resetCart: (state) => {
       state.cart = []

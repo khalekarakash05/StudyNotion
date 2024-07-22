@@ -7,11 +7,11 @@ import {formattedDate} from "../../../utils/dataFormatter"
 const MyProfile = () => {
 
     const user  = useSelector((state) => state.profile.user);
-    // console.log("user",user.additionDetails?.gender)
+    console.log("usrerwrer",user)
     const navigate = useNavigate();
 
   return (
-    <div className=''>
+    <div className="mt-[70px]">
         <h1 className="mb-14 text-3xl font-medium text-richblack-5">
         My Profile
       </h1>

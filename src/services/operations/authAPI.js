@@ -5,6 +5,7 @@ import { resetCart } from "../../slices/cartSlice"
 import { setUser } from "../../slices/profileSlice"
 import { apiConnector } from "../apiconnector"
 import { endpoints } from "../apis"
+import { useSelector } from "react-redux"
 
 
 
@@ -44,29 +45,29 @@ export function sendOtp(email, navigate) {
   }
 }
 
-export function signUp(
-  accountType,
-  firstName,
-  lastName,
-  email,
-  password,
-  confirmPassword,
-  otp,
-  navigate
-) {
-  return async (dispatch) => {
+export function signUp(lastName, accountType, password, confirmPassword, email, firstName, otp, navigate)
+{
+  return async (dispatch, getState) => {
     const toastId = toast.loading("Loading...")
     dispatch(setLoading(true))
+    
     try {
-      console.log("accountType", accountType)
+      // console.log("singUpdata", signUpData)
+      // console.log("otp", otp)
+      // console.log("accountType", accountType)
+      // console.log("phone", "navigate", navigate, "otp", otp, "confirmPassword", confirmPassword, "password", password, "email", email, "lastName", lastName, "firstName", firstName, "accountType", accountType, )
+      const { signupData } = getState().auth;
+      console.log("signupData dataaa", signupData)
       const response = await apiConnector("POST", SIGNUP_API, {
-        accountType,
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
+        accountType: signupData.accountType,
+        firstName: signupData.firstName,
+        lastName: signupData.lastName,
+        email: signupData.email,
+        password: signupData.password,
+        confirmPassword: signupData.confirmPassword,
         otp,
+        phoneNumber: signupData.phoneNumber,
+        
       })
 
       console.log("SIGNUP API RESPONSE............", response)

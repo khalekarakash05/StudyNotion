@@ -6,6 +6,7 @@ import IconBtn from '../../../../common/IconBtn'
 import { resetCourseState, setStep } from '../../../../../slices/courseSlice'
 import { COURSE_STATUS } from '../../../../../utils/constants'
 import {editCourseDetails} from "../../../../../services/operations/courseDetailsAPI"
+import { useNavigate } from 'react-router-dom'
 
 const PublishCourse = () => {
 
@@ -14,6 +15,7 @@ const PublishCourse = () => {
     const {course} = useSelector((state)=> state.course);
     const {token} = useSelector((state)=> state.auth);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(()=>{
         if(course?.status === COURSE_STATUS.PUBLISHED){
@@ -92,6 +94,7 @@ const PublishCourse = () => {
                 </button>
 
                 <IconBtn
+                    onClick={navigate("/dashboard/my-courses")}
                     disabled={loading}
                     text="Save Changes"
                 ></IconBtn>

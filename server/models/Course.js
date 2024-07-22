@@ -20,11 +20,12 @@ const courseSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    courseContent: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Section",
-        required: true
-    }],
+    courseContent: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Section",
+		},
+	],
     ratingAndReviews: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "RatingAndReview",
@@ -55,6 +56,7 @@ const courseSchema = new mongoose.Schema({
 	status: {
 		type: String,
 		enum: ["Draft", "Published"],
+        default: 'Draft',
 	},
 
 }, {timestamps: true});

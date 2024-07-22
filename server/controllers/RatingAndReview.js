@@ -9,10 +9,12 @@ exports.createRating = async(req, res) => {
         const userId = req.user.id;
         //fetch data from req body
         const {rating, review, courseId} = req.body;
+        console.log("rating", rating, "review", review, "courseId", courseId);
         //check if user is enrolled or not
         const courseDetails = await Course.findOne({_id: courseId, 
                                     studentEnrolled: {$elemMatch: {$eq: userId}}});
         
+        console.log("courseDetails", courseDetails)
         if(!courseDetails){
             return res.status(404).json({
                 success: false,
@@ -24,6 +26,7 @@ exports.createRating = async(req, res) => {
             user: userId,
             course: courseId
         })
+        console.log("alreadyReviewed", alreadyReviewed);
         if(alreadyReviewed){
             return res.status(400).json({
                 success: false,
@@ -39,6 +42,7 @@ exports.createRating = async(req, res) => {
                 course: courseId
             }
         )
+        console.log("createRatingReview", createRatingReview);
         //update course with this rating and review
         const updateCourse = await Course.findByIdAndUpdate(
             {_id: courseId},
@@ -119,7 +123,7 @@ exports.getAllRatingsAndReviews = async(req, res)=> {
                                 .sort({rating: "desc"})
                                 .populate({
                                     path: "user",
-                                    select: "firstName, lastName, email, image"
+                                    select: "firstName lastName email image"
                                 })
                                 .populate({
                                     path: "course",
@@ -129,7 +133,7 @@ exports.getAllRatingsAndReviews = async(req, res)=> {
         return res.status(200).json({
             success: true,
             message: "All reviews are fetched successfully",
-            allReview,
+            data: allReview,
         })
     } catch (error) {
         console.log(error);

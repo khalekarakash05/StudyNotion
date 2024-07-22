@@ -16,6 +16,7 @@ function SignupForm() {
 
   // student or instructor
   const [accountType, setAccountType] = useState(ACCOUNT_TYPE.STUDENT)
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -23,12 +24,13 @@ function SignupForm() {
     email: "",
     password: "",
     confirmPassword: "",
+    // phoneNumber: "",
   })
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const { firstName, lastName, email, password, confirmPassword } = formData
+  const { firstName, lastName, email, password, confirmPassword, } = formData
 
   // Handle input fields, when some value changes
   const handleOnChange = (e) => {
@@ -46,17 +48,20 @@ function SignupForm() {
       toast.error("Passwords Do Not Match")
       return
     }
+    const otpData = { email };
     const signupData = {
       ...formData,
       accountType,
+      phoneNumber
     }
 
     // Setting signup data to state
     // To be used after otp verification
     dispatch(setSignupData(signupData))
     console.log("signupData", signupData)
+    console.log("otpData", otpData);
     // Send OTP to user for verification
-    dispatch(sendOtp(formData.email, navigate))
+    dispatch(sendOtp(otpData, navigate));
 
     // Reset
     setFormData({
@@ -65,9 +70,13 @@ function SignupForm() {
       email: "",
       password: "",
       confirmPassword: "",
+      // phoneNumber
     })
     setAccountType(ACCOUNT_TYPE.STUDENT)
   }
+
+  // const signupData = useSelector((state) => state.auth)
+  //   console.log("data", signupData);
 
   // data to pass to Tab component
   const tabData = [
@@ -136,6 +145,23 @@ function SignupForm() {
             value={email}
             onChange={handleOnChange}
             placeholder="Enter email address"
+            style={{
+              boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+            }}
+            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+          />
+        </label>
+        <label className="w-full">
+          <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+            Phone Number <sup className="text-pink-200">*</sup>
+          </p>
+          <input
+            required
+            type="text"
+            name="phoneNumber"
+            value={phoneNumber}
+            onChange={(e)=>setPhoneNumber(e.target.value)}
+            placeholder="Enter your phone number"
             style={{
               boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
             }}
