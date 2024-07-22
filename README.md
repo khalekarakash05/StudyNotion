@@ -1,6 +1,6 @@
 # StudyNotion Online Education Platform (MERN App)
 
-[!Main-Page](./src/assets/ReadmeFile/mainpage.png)
+![Main-Page](./src/assets/ReadmeFile/mainpage.png)
 
 ## Project Description
 
@@ -92,7 +92,7 @@ The back end of the platform is built using NodeJS and ExpressJS. It provides AP
 - **Instructor Schema**: Fields include name, email, password, and course details.
 - **Course Schema**: Fields include course name, description, instructor details, and media content.
 
-[!Database-Schema](./src/assets/ReadmeFile/schema.png)
+![Database Schema](./src/assets/ReadmeFile/schema.png)
 
 ## API Design
 
@@ -183,7 +183,6 @@ StudyNotion is a fully functional ed-tech platform that enables users to create,
 
 ## Contact
 
-For more information, please contact us at [your-email@example.com].
+For more information, please contact us at [akashkhalekar@gmail.com].
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
