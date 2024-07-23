@@ -53,7 +53,7 @@ const ViewCourse = () => {
         )
     }
   return (
-    <div className="mt-[70px]">
+    <div className="lg:mt-[70px]">
         <div className="relative flex min-h-[calc(100vh-3.5rem)]">
             <VideoDetailsSidebar setReviewModal={setReviewModal}></VideoDetailsSidebar>
 
