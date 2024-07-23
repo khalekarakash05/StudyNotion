@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "https://study-notion-ikelpqf6d-akashs-projects-0345b2d2.vercel.app/",
         credentials: true,
     })
 );
