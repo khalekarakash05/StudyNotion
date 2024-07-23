@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "https://study-notion-ikelpqf6d-akashs-projects-0345b2d2.vercel.app/",
+        origin: "https://study-notion-rouge-nu.vercel.app/",
         credentials: true,
     })
 );
