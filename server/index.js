@@ -30,9 +30,13 @@ app.use(cookieParser());
 app.use(
     cors({
         origin: "https://study-notion-rouge-nu.vercel.app/",
-        credentials: true,
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+            credentials: true
     })
 );
+
+// app.use(cors());
 app.use(fileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp/",
