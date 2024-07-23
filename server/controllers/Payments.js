@@ -9,7 +9,7 @@ const { json } = require("express");
 const {paymentSuccessEmail} = require("../mail/templates/paymentSuccessEmail")
 const crypto = require('crypto');
 const CourseProgress = require("../models/CourseProgress");
-const { ConversationContextImpl } = require("twilio/lib/rest/conversations/v1/conversation");
+// const { ConversationContextImpl } = require("twilio/lib/rest/conversations/v1/conversation");
 
 
 const extractCourseIds = (body) => {
