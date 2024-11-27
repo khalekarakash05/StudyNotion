@@ -246,22 +246,27 @@ const CourseInformationForm = () => {
       <div className="flex flex-col space-y-2">
         <label className="text-sm text-richblack-5" htmlFor="coursePrice">
           Course Price <sup className="text-pink-200">*</sup></label>
-          <div className="relative">
-        <input type="text"
-          id='coursePrice'
-          placeholder='       Enter Price'
-          {...register("coursePrice", 
-          {required: true, 
-            valueAsNumber: true, pattern: /^[0-9]*$/})}
+          
+        <div className="relative">
+          <HiOutlineCurrencyRupee
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-2xl text-richblack-400"
+          />
+          <input
+            type="text"
+            id="coursePrice"
+            placeholder="Enter Price"
+            {...register("coursePrice", {
+              required: true,
+              valueAsNumber: true,
+              pattern: /^[0-9]*$/,
+            })}
             style={{
               boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
             }}
-            className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] text-richblack-5"
-        />
-        
-        <HiOutlineCurrencyRupee className="absolute left-3 top-1/2 inline-block -translate-y-1/2 text-2xl text-richblack-400" >
+            className="w-full rounded-[0.5rem] bg-richblack-700 p-[12px] pl-10 text-richblack-5"
+          />
+        </div>
 
-        </HiOutlineCurrencyRupee></div>
         {
           errors.coursePrice && (
             <span className="ml-2 text-xs tracking-wide text-pink-200">

@@ -76,23 +76,22 @@ const Navbar = () => {
                                          <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-richblack-5"></div>
 
                                     
-                                        {   loading ? (
+                                         {loading ? (
                                             <div>Loading...</div>
-                                            ) : (
-                                            subLinks.length ? (
-                                               
-                                                    subLinks.map((subLink, index)=>(
-                                                        <Link  to={`catalog/${subLink.name}`} key={index}>
-                                                            <div className="flex items-center">
+                                        ) : (
+                                            subLinks.length > 0 ? (
+                                                subLinks.map((subLink, index) => (
+                                                    <Link to={`catalog/${subLink.name}`} key={index}>
+                                                        <div className="flex items-center">
                                                             <p>{subLink.name}</p>
-                                                            </div>
-                                                        </Link>
-                                                    ))
-                                               
+                                                        </div>
+                                                    </Link>
+                                                ))
                                             ) : (
-                                                <div></div>
-                                            ))
-                                        }
+                                                <div>No categories available</div>
+                                            )
+                                        )}
+
                                     </div>
 
                                     
