@@ -35,6 +35,7 @@ const CourseDetailsCard = ({course, setConfirmationModal, handleBuyCourse}) => {
         }
 
         if(token){
+            console.log("")
             //token hai matlab logged in hai
             dispatch(addToCart(course));
             navigate("/dashboard/cart")
